@@ -23,7 +23,7 @@ jobs:
         working-directory: ./front
 
       - name: Run Front-end Tests
-        run: npm run test:prod
+        run: npm test
         working-directory: ./front
 
       - name: Upload Karma Report

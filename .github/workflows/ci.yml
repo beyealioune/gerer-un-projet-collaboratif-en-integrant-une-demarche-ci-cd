@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -33,7 +33,7 @@ jobs:
       working-directory: ./front
 
     - name: Run frontend tests
-      run: npm run test
+      run: npm run test -- --watch=false
       working-directory: ./front
 
     - name: Build frontend

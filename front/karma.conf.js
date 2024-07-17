@@ -6,19 +6,17 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter'), // Add this
+      require('karma-coverage-istanbul-reporter'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
-      jasmine: {
-        // Jasmine options here
-      },
-      clearContext: false // Leave Jasmine Spec Runner output visible in browser
+      jasmine: {},
+      clearContext: false
     },
     jasmineHtmlReporter: {
-      suppressAll: true // Removes the duplicated traces
+      suppressAll: true
     },
-    coverageIstanbulReporter: { // Updated to use coverage-istanbul
+    coverageIstanbulReporter: {
       dir: require('path').join(__dirname, './coverage/bobapp'),
       reports: ['html', 'lcovonly', 'text-summary'],
       fixWebpackSourcePaths: true,
@@ -28,7 +26,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'], // Change to headless mode
     singleRun: false,
     restartOnFileChange: true
   });

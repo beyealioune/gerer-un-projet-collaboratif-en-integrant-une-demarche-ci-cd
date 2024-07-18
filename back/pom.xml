@@ -20,7 +20,7 @@
 	<properties>
 		<sonar.organization>beyealioune1</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<java.version>17</java.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>

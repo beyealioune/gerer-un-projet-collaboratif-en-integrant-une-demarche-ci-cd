@@ -49,7 +49,7 @@ jobs:
           architecture: x64
 
       - name: Build with Maven
-        run: mvn -B package --file ./back/pom.xml
+        run: mvn -B package --file ./pom.xml
         working-directory: ./back
 
       - name: Test with Maven

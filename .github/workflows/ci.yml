@@ -1,6 +1,4 @@
 name: CI/CD
-run-name: CI/CD Pipeline
-
 on:
   push:
     branches:
@@ -77,10 +75,10 @@ jobs:
           architecture: x64
 
       - name: SonarQube Scan
-        run: mvn sonar:sonar \
-            -Dsonar.projectKey=my_project_key \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify sonar:sonar \
+             -Dsonar.projectKey=my_project_key \
+             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         working-directory: ./back
 
   build:

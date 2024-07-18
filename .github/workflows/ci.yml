@@ -45,7 +45,7 @@ jobs:
           args: >
             -Dsonar.organization=beyealioune1
             -Dsonar.projectKey=beyealioune1_beyealioune
-            env:
+          env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -86,7 +86,7 @@ jobs:
           args: >
             -Dsonar.organization=beyealioune1
             -Dsonar.projectKey=beyealioune1_beyealioune
-          env:
+        env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -97,6 +97,4 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
-      # Ajoutez les étapes pour construire et déployer votre application
 

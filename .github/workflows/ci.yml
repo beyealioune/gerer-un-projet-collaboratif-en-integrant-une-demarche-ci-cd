@@ -10,37 +10,37 @@ on:
   workflow_dispatch:
 
 jobs:
-  frontend_tests:
-    name: Frontend Tests and SonarCloud Analysis
+  tests_frontend:
+    name: Tests Frontend et Analyse SonarCloud
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Frontend Code
+      - name: Récupérer le code source du Frontend
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           path: front
 
-      - name: Setup Node.js
+      - name: Configurer Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '14'
 
-      - name: Install Dependencies
+      - name: Installer les dépendances
         run: npm ci
         working-directory: front
 
-      - name: Run Frontend Tests and Generate Coverage Report
+      - name: Exécuter les tests Frontend et générer le rapport de couverture
         run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
         working-directory: front
 
-      - name: Upload Frontend Coverage Report
+      - name: Téléverser le rapport de couverture du Frontend
         uses: actions/upload-artifact@v2
         with:
-          name: frontend-coverage
+          name: rapport-coverage-frontend
           path: front/coverage
 
-      - name: SonarCloud Scan - Frontend
+      - name: Analyse SonarCloud - Frontend
         uses: sonarsource/sonarcloud-github-action@master
         with:
           projectBaseDir: front
@@ -50,11 +50,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+          
   backend_tests:
     name: Backend Tests, Jacoco Report, and SonarCloud Analysis
     runs-on: ubuntu-latest
-    needs: frontend_tests
+    needs: tests_frontend
 
     steps:
       - name: Checkout Backend Code
@@ -104,7 +104,7 @@ jobs:
   publish_docker_hub:
     name: Publish Docker Images
     runs-on: ubuntu-latest
-    needs: [frontend_tests, backend_tests]
+    needs: [tests_frontend, backend_tests]
 
     steps:
       - name: Checkout Code
@@ -116,8 +116,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Frontend Docker Image
         uses: docker/build-push-action@v2
@@ -125,7 +125,7 @@ jobs:
           context: ./front
           file: ./front/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-image:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/frontend-image:latest
 
       - name: Build and Push Backend Docker Image
         uses: docker/build-push-action@v2
@@ -133,4 +133,4 @@ jobs:
           context: ./back
           file: ./back/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend-image:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/backend-image:latest

@@ -48,7 +48,7 @@ jobs:
           architecture: x64
 
       - name: Build with Maven
-        run: mvn -B package --file ./pom.xml
+        run: mvn -B package
         working-directory: ./back
 
       - name: Test with Maven
@@ -70,9 +70,9 @@ jobs:
           mvn clean verify sonar:sonar \
             -Dsonar.projectKey=beyealioune1_beyealioune \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.java.binaries=./back/target/classes
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           echo "SonarQube Scan for Backend completed."
+        working-directory: ./back
 
   build:
     runs-on: ubuntu-latest
@@ -90,7 +90,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Push Backend
+      - name: Build and Push Back-end
         uses: docker/build-push-action@v5
         with:
           context: ./back
@@ -98,7 +98,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
 
-      - name: Build and Push Frontend
+      - name: Build and Push Front-end
         uses: docker/build-push-action@v5
         with:
           context: ./front

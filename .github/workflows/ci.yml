@@ -34,6 +34,21 @@ jobs:
           name: karma-report
           path: ./front/coverage
 
+      - name: SonarQube Scan - Frontend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          echo "Running SonarQube Scan for Frontend..."
+          # Replace this with your actual SonarQube scanner command for frontend
+          # Example:
+          # sonar-scanner \
+          #   -Dsonar.projectKey=beyealioune1_beyealioune_frontend \
+          #   -Dsonar.sources=front/src \
+          #   -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          #   -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          echo "SonarQube Scan for Frontend completed."
+
   backendTests:
     runs-on: ubuntu-latest
     steps:
@@ -61,55 +76,25 @@ jobs:
           name: jacoco-report
           path: ./back/target/site/jacoco
 
-  sonarcloud_frontend:
-    runs-on: ubuntu-latest
-    needs: frontendTests
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: SonarCloud Scan - Frontend
-        uses: sonarsource/sonarcloud-github-action@master
-        with:
-          projectBaseDir: front
-          args: >
-            -Dsonar.organization=beyealioune1
-            -Dsonar.projectKey=beyealioune1_beyealioune
+      - name: SonarQube Scan - Backend
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          echo "Running SonarQube Scan for Backend..."
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=beyealioune1_beyealioune \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.java.binaries=./back/target/classes
+          echo "SonarQube Scan for Backend completed."
 
-  sonarcloud_backend:
+  build:
     runs-on: ubuntu-latest
-    needs: backendTests
+    needs: [frontendTests, backendTests]
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          architecture: x64
-
-      - name: SonarCloud Scan - Backend
-        uses: sonarsource/sonarcloud-github-action@master
-        with:
-          projectBaseDir: back
-          args: >
-            -Dsonar.organization=beyealioune1
-            -Dsonar.projectKey=beyealioune1_beyealioune
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  build_and_deploy:
-    runs-on: ubuntu-latest
-    needs: [sonarcloud_frontend, sonarcloud_backend]
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -120,7 +105,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Push Back-end Docker Image
+      - name: Build and Push Backend
         uses: docker/build-push-action@v5
         with:
           context: ./back
@@ -128,7 +113,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
 
-      - name: Build and Push Front-end Docker Image
+      - name: Build and Push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./front

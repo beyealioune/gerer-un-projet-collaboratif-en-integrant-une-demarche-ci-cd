@@ -4,35 +4,32 @@ FROM node:latest as build
 # Définir le répertoire de travail
 WORKDIR /usr/local/app
 
-# Copier les fichiers package.json et package-lock.json séparément
+# Copier les fichiers de package
 COPY package.json package-lock.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN yarn
 
-# Copier le reste des fichiers du projet
-COPY . .
+# Installer Angular CLI globalement
+RUN npm install -g @angular/cli
 
-# Vérifiez les dépendances installées (facultatif, pour débogage)
-RUN npm list
+# Copier tous les fichiers du projet dans le conteneur
+COPY ./ ./
 
-# Affichez les fichiers dans le répertoire de travail (facultatif, pour débogage)
-RUN ls -la
-
-# Construire l'application
+# Exécuter la commande de build
 RUN npm run build
 
 # Étape de production
 FROM nginx:latest as production
 
-# Copier le fichier de configuration Nginx personnalisé
+# Copier la configuration NGINX personnalisée
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copier les fichiers construits depuis l'étape de build vers le répertoire Nginx
+# Copier les fichiers de build de l'étape précédente
 COPY --from=build /usr/local/app/dist/bobapp /usr/share/nginx/html
 
-# Exposer le port 80 pour le service Nginx
+# Exposer le port 80
 EXPOSE 80
 
-# Démarrer Nginx
+# Commande par défaut pour lancer NGINX
 CMD ["nginx", "-g", "daemon off;"]

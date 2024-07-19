@@ -1,14 +1,26 @@
-FROM node:latest as build
+# Use an official Node.js runtime as a parent image
+FROM node:16
 
-WORKDIR /usr/local/app
-COPY ./ /usr/local/app/
+# Set the working directory
+WORKDIR /app
 
-RUN yarn
+# Copy package.json and package-lock.json
+COPY front/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY front/ .
+
+# Build the application
 RUN npm run build
- 
-FROM nginx:latest as production
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /usr/local/app/dist/bobapp /usr/share/nginx/html
+# Set environment variables (if needed)
+ENV NODE_ENV=production
 
-EXPOSE 80
+# Expose port (if needed)
+EXPOSE 3000
+
+# Command to run the application
+CMD ["npm", "start"]

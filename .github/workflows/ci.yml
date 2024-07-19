@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
 
@@ -56,10 +56,24 @@ jobs:
         working-directory: ./back
 
       - name: Upload Jacoco Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: jacoco-report
           path: ./back/target/site/jacoco
+
+  sonarqube:
+    runs-on: ubuntu-latest
+    needs: [frontendTests, backendTests]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          architecture: x64
 
       - name: SonarQube Scan - Backend
         env:
@@ -67,7 +81,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           echo "Running SonarQube Scan for Backend..."
-          mvn clean verify sonar:sonar \
+          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=beyealioune1_beyealioune \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
@@ -76,16 +90,16 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [backendTests, frontendTests]
+    needs: [backendTests, frontendTests, sonarqube]
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -96,7 +110,7 @@ jobs:
           context: ./back
           file: ./back/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/bobapp-back:latest
 
       - name: Build and Push Front-end
         uses: docker/build-push-action@v5
@@ -104,4 +118,4 @@ jobs:
           context: ./front
           file: ./front/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-front:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/bobapp-front:latest

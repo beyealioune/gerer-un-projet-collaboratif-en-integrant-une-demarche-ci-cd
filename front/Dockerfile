@@ -11,13 +11,13 @@ COPY package.json package-lock.json ./
 RUN yarn
 
 # Installer Angular CLI globalement
-RUN npm install -g @angular/cli
+RUN npm install -g @angular/cli@latest
 
 # Copier tous les fichiers du projet dans le conteneur
 COPY ./ ./
 
 # Exécuter la commande de build
-RUN npx ng build
+RUN ng build --prod
 
 # Étape de production
 FROM nginx:latest as production
@@ -26,10 +26,11 @@ FROM nginx:latest as production
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copier les fichiers de build de l'étape précédente
-COPY --from=build /usr/local/app/dist/bobapp /usr/share/nginx/html
+COPY --from=build /usr/local/app/dist /usr/share/nginx/html
 
 # Exposer le port 80
 EXPOSE 80
 
 # Commande par défaut pour lancer NGINX
 CMD ["nginx", "-g", "daemon off;"]
+

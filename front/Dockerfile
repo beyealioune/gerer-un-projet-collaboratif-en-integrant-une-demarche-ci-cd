@@ -17,7 +17,7 @@ RUN npm install -g @angular/cli
 COPY ./ ./
 
 # Exécuter la commande de build
-RUN npm run build
+RUN npx ng build
 
 # Étape de production
 FROM nginx:latest as production

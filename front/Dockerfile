@@ -1,26 +1,23 @@
-# Use an official Node.js runtime as a parent image
+# Utiliser une image Node.js officielle comme image parente
 FROM node:16
 
-# Set the working directory
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY front/package*.json ./
+# Copier package.json et package-lock.json dans le conteneur
+COPY package*.json ./
 
-# Install dependencies
+# Installer les dépendances
 RUN npm install
 
-# Copy the rest of the application code
-COPY front/ .
+# Copier le reste du code de l'application
+COPY . .
 
-# Build the application
+# Construire l'application
 RUN npm run build
 
-# Set environment variables (if needed)
-ENV NODE_ENV=production
-
-# Expose port (if needed)
+# Exposer le port (si nécessaire)
 EXPOSE 3000
 
-# Command to run the application
+# Commande pour exécuter l'application
 CMD ["npm", "start"]

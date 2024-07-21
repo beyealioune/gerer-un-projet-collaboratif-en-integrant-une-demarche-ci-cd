@@ -35,20 +35,14 @@ jobs:
           pwd
         working-directory: ./front
 
+      - name: Run Front-end Tests
+        run: ng test --code-coverage || true
+        working-directory: ./front
+
       - name: List Coverage Directory
         run: |
           echo "Listing coverage directory:"
           ls -R /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front || echo "Coverage directory does not exist"
-        working-directory: ./front
-
-      - name: Check Angular CLI Installation
-        run: |
-          echo "Checking Angular CLI version:"
-          npx ng --version || echo "Angular CLI not found"
-        working-directory: ./front
-
-      - name: Run Front-end Tests
-        run: npx ng test --code-coverage || true
         working-directory: ./front
 
       - name: Upload Karma Report

@@ -38,7 +38,7 @@ jobs:
       - name: List Coverage Directory
         run: |
           echo "Listing coverage directory:"
-          ls -R ./front/coverage || echo "Coverage directory does not exist"
+          ls -R /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front || echo "Coverage directory does not exist"
         working-directory: ./front
 
       - name: Check Angular CLI Installation
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: karma-report
-          path: ./front/coverage
+          path: /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front/coverage
 
   backendTests:
     runs-on: ubuntu-latest

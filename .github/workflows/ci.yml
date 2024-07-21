@@ -30,7 +30,7 @@ jobs:
         working-directory: ./front
 
       - name: Run Front-end Tests
-        run: ng test --code-coverage || true
+        run: ng test --code-coverage --watch=false || true
         working-directory: ./front
 
       - name: List Coverage Directory

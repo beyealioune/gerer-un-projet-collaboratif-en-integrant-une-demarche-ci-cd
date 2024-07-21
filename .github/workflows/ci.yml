@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: karma-report
-          path: ./front/coverage/bobapp
+          path: ./front/coverage/bobapp/html
 
   backendTests:
     runs-on: ubuntu-latest

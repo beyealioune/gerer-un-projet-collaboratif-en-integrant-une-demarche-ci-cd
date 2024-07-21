@@ -31,20 +31,26 @@ jobs:
         run: npm ci
         working-directory: ./front
 
-      - name: Run Front-end Tests
-        run: npm test -- --no-fail-on-empty-test-suite || true
+      - name: Run Front-end Tests with Code Coverage
+        run: npm run test -- --code-coverage --no-fail-on-empty-test-suite || true
         working-directory: ./front
 
       - name: List Coverage Files
         run: |
           echo "Listing coverage directory:"
-          ls -R front/coverage/bobapp
+          ls -R front/coverage || echo "Coverage directory not found"
         working-directory: ./front
 
-      - name: Upload Karma Report
+      - name: List Contents of Bobapp Directory
+        run: |
+          echo "Listing contents of bobapp directory:"
+          ls -R front/coverage/bobapp || echo "Bobapp directory not found"
+        working-directory: ./front
+
+      - name: Upload Karma Coverage Report
         uses: actions/upload-artifact@v4
         with:
-          name: karma-report
+          name: karma-coverage-report
           path: front/coverage/bobapp/html/**
 
   backendTests:

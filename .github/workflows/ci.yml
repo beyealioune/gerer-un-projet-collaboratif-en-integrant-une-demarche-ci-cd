@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: karma-coverage-report
-          path: front/coverage/bobapp/html/**
+          path: front/coverage/bobapp
 
   backendTests:
     name: Backend Tests

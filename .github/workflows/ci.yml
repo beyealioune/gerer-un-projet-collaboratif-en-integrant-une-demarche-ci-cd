@@ -16,10 +16,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use Node.js 16.x
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 20.x
 
       - name: Install Front-end Dependencies
         run: npm install
@@ -38,7 +38,7 @@ jobs:
       - name: List Coverage Directory
         run: |
           echo "Listing coverage directory:"
-          ls -R /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front/coverage || echo "Coverage directory does not exist"
+          ls -R ./front/coverage || echo "Coverage directory does not exist"
         working-directory: ./front
 
       - name: Check Angular CLI Installation
@@ -48,14 +48,14 @@ jobs:
         working-directory: ./front
 
       - name: Run Front-end Tests
-        run: npx ng test --code-coverage --no-fail-on-empty-test-suite || true
+        run: npx ng test --code-coverage || true
         working-directory: ./front
 
       - name: Upload Karma Report
         uses: actions/upload-artifact@v4
         with:
           name: karma-report
-          path: /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front/coverage
+          path: ./front/coverage
 
   backendTests:
     runs-on: ubuntu-latest
@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/back/target/site/jacoco
+          path: ./back/target/site/jacoco
 
   sonarqube:
     runs-on: ubuntu-latest

@@ -6,7 +6,7 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter'),
+      require('karma-coverage'), // Mise à jour ici
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
@@ -16,9 +16,9 @@ module.exports = function (config) {
     jasmineHtmlReporter: {
       suppressAll: true
     },
-    coverageIstanbulReporter: {
+    coverageReporter: { // Mise à jour ici
       dir: require('path').join(__dirname, './coverage/bobapp'),
-      reports: ['html', 'lcovonly', 'text-summary'],
+      reports: ['html', 'lcov', 'text-summary'],
       fixWebpackSourcePaths: true,
     },
     reporters: ['progress', 'kjhtml'],
@@ -26,7 +26,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['ChromeHeadless'], // Change to headless mode
+    browsers: ['ChromeHeadless'], // Mode headless pour CI
     singleRun: false,
     restartOnFileChange: true
   });

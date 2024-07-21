@@ -76,22 +76,24 @@ jobs:
           distribution: 'temurin'
           architecture: x64
 
-      - name: SonarQube Scan - Backend
+      - name: SonarCloud Scan - Backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          echo "Running SonarQube Scan for Backend..."
+          echo "Running SonarCloud Scan for Backend..."
           mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=beyealioune1_beyealioune \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-          echo "SonarQube Scan for Backend completed."
+          echo "SonarCloud Scan for Backend completed."
         working-directory: ./back
 
   build:
     runs-on: ubuntu-latest
-    needs: [backendTests, frontendTests, sonarqube]
+    needs: [frontendTests, backendTests, sonarqube]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3

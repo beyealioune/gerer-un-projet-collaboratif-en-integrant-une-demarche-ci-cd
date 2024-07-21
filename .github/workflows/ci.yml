@@ -25,6 +25,10 @@ jobs:
         run: npm install
         working-directory: ./front
 
+      - name: Install Angular CLI Globally
+        run: npm install -g @angular/cli
+        working-directory: ./front
+
       - name: Check Current Directory
         run: |
           echo "Current directory:"
@@ -40,11 +44,11 @@ jobs:
       - name: Check Angular CLI Installation
         run: |
           echo "Checking Angular CLI version:"
-          ng --version || echo "Angular CLI not found"
+          npx ng --version || echo "Angular CLI not found"
         working-directory: ./front
 
       - name: Run Front-end Tests
-        run: ng test --code-coverage --no-fail-on-empty-test-suite || true
+        run: npx ng test --code-coverage --no-fail-on-empty-test-suite || true
         working-directory: ./front
 
       - name: Upload Karma Report

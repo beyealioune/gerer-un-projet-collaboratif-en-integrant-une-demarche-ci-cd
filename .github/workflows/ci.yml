@@ -34,7 +34,13 @@ jobs:
       - name: List Coverage Directory
         run: |
           echo "Listing coverage directory:"
-          ls -R coverage || echo "Coverage directory does not exist"
+          ls -R /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front/coverage || echo "Coverage directory does not exist"
+        working-directory: ./front
+
+      - name: Check Angular CLI Installation
+        run: |
+          echo "Checking Angular CLI version:"
+          ng --version || echo "Angular CLI not found"
         working-directory: ./front
 
       - name: Run Front-end Tests
@@ -45,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: karma-report
-          path: coverage/bobapp
+          path: /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front/coverage
 
   backendTests:
     runs-on: ubuntu-latest
@@ -72,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: ./back/target/site/jacoco
+          path: /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/back/target/site/jacoco
 
   sonarqube:
     runs-on: ubuntu-latest

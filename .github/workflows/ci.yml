@@ -38,14 +38,14 @@ jobs:
       - name: List Coverage Directory
         run: |
           echo "Listing coverage directory:"
-          ls -R coverage || echo "Coverage directory does not exist"
+          ls -R /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front || echo "Coverage directory does not exist"
         working-directory: ./front
 
       - name: Upload Karma Report
         uses: actions/upload-artifact@v4
         with:
           name: karma-report
-          path: coverage/bobapp
+          path: /home/runner/work/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/gerer-un-projet-collaboratif-en-integrant-une-demarche-ci-cd/front/coverage 
           if-no-files-found: warn
           compression-level: 6
           overwrite: false

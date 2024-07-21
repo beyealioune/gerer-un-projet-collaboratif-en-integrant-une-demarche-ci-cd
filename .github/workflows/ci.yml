@@ -16,21 +16,31 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 20.x
 
       - name: Install Front-end Dependencies
         run: npm install
         working-directory: ./front
 
+      - name: Install Angular CLI Globally
+        run: npm install -g @angular/cli
+        working-directory: ./front
+
       - name: Run Front-end Tests
-        run: npm test -- --no-fail-on-empty-test-suite || true
+        run: ng test --code-coverage || true
+        working-directory: ./front
+
+      - name: List Coverage Directory
+        run: |
+          echo "Listing coverage directory:"
+          ls -R ./front/coverage || echo "Coverage directory does not exist"
         working-directory: ./front
 
       - name: Upload Karma Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: karma-report
           path: ./front/coverage
@@ -57,7 +67,7 @@ jobs:
         working-directory: ./back
 
       - name: Upload Jacoco Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: ./back/target/site/jacoco

@@ -26,14 +26,29 @@ jobs:
         working-directory: ./front
 
       - name: Run Front-end Tests
-        run: ng test --code coverage --no-fail-on-empty-test-suite || true
+        run: ng test --code-coverage --no-fail-on-empty-test-suite || true
+        working-directory: ./front
+
+      - name: Check Current Directory
+        run: |
+          echo "Current directory:"
+          pwd
+        working-directory: ./front
+
+      - name: List Coverage Directory
+        run: |
+          echo "Listing coverage directory:"
+          ls -R coverage || echo "Coverage directory does not exist"
         working-directory: ./front
 
       - name: Upload Karma Report
         uses: actions/upload-artifact@v4
         with:
           name: karma-report
-          path: ./front/coverage
+          path: coverage/bobapp
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
 
   backendTests:
     runs-on: ubuntu-latest
@@ -57,10 +72,13 @@ jobs:
         working-directory: ./back
 
       - name: Upload Jacoco Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: ./back/target/site/jacoco
+          path: back/target/site/jacoco
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
 
   sonarqube:
     runs-on: ubuntu-latest

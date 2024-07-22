@@ -140,4 +140,4 @@ jobs:
 
       - name: Run Back-end Tests in Docker
         run: |
-          docker run --rm -v $(pwd)/back:/app -w /app maven:3.9-eclipse-temurin-17 bash -c "mvn clean verify"
+          docker run --rm -v $(pwd)/back:/app -w /app maven:3.9.2-eclipse-temurin-17 bash -c "mvn clean verify"

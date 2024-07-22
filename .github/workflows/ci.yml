@@ -85,19 +85,15 @@ jobs:
           distribution: 'temurin'
           architecture: x64
 
-      - name: Move to Correct Directory for SonarCloud
-        run: cd Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
-
-      - name: SonarCloud Scan - Backend
+      - name: Run SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v1
         with:
-          args: |
-            -Dsonar.projectKey=beyealioune1_beyealioune
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          projectKey: beyealioune1_beyealioune
+          organization: ${{ secrets.SONAR_ORGANIZATION }}
+          token: ${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: ./back
 
   build:
     runs-on: ubuntu-latest

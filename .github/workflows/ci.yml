@@ -136,8 +136,9 @@ jobs:
     steps:
       - name: Run Front-end Tests in Docker
         run: |
-          docker run --rm -v $(pwd)/front:/app -w /app/node:20 bash -c "npm install && npm install -g @angular/cli && ng test --code-coverage --watch=false || true"
+          docker run --rm -v $(pwd)/front:/app -w /app node:20 bash -c "npm install && npm install -g @angular/cli && ng test --code-coverage --watch=false || true"
 
       - name: Run Back-end Tests in Docker
         run: |
-          docker run --rm -v $(pwd)/back:/app -w /app maven:3.8.6-openjdk-17 bash -c "mvn clean verify"
+          docker run --rm -v $(pwd)/back:/app -w /app maven:3.8.6-jdk-17 bash -c "mvn clean verify"
+

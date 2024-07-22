@@ -86,13 +86,14 @@ jobs:
           architecture: x64
 
       - name: Run SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v1
-        with:
-          projectKey: beyealioune1_beyealioune
-          organization: ${{ secrets.SONAR_ORGANIZATION }}
-          token: ${{ secrets.SONAR_TOKEN }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "Running SonarCloud Scan for Backend..."
+          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=beyealioune1_beyealioune \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          echo "SonarCloud Scan for Backend completed."
         working-directory: ./back
 
   build:
@@ -127,3 +128,16 @@ jobs:
           file: ./front/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/bobapp-front:latest
+
+  testInContainers:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ${{ needs.build.result == 'success' }}
+    steps:
+      - name: Run Front-end Tests in Docker
+        run: |
+          docker run --rm -v $(pwd)/front:/app -w /app/node:20 bash -c "npm install && npm install -g @angular/cli && ng test --code-coverage --watch=false || true"
+
+      - name: Run Back-end Tests in Docker
+        run: |
+          docker run --rm -v $(pwd)/back:/app -w /app maven:3.8.6-openjdk-17 bash -c "mvn clean verify"

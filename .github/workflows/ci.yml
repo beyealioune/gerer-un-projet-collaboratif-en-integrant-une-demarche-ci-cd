@@ -85,6 +85,9 @@ jobs:
           distribution: 'temurin'
           architecture: x64
 
+      - name: Move to Correct Directory for SonarCloud
+        run: cd Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+
       - name: SonarCloud Scan - Backend
         uses: sonarsource/sonarcloud-github-action@v1
         with:
@@ -95,7 +98,6 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        working-directory: ./Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
 
   build:
     runs-on: ubuntu-latest

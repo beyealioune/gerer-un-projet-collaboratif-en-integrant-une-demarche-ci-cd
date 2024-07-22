@@ -15,30 +15,30 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Utiliser Node.js 20.x
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
 
-      - name: Installer les dépendances Front-end
+      - name: Install Front-end Dependencies
         run: npm install
         working-directory: ./front
 
-      - name: Installer Angular CLI Globalement
+      - name: Install Angular CLI Globally
         run: npm install -g @angular/cli
         working-directory: ./front
 
-      - name: Exécuter les tests Front-end
+      - name: Run Front-end Tests
         run: ng test --code-coverage --watch=false || true
         working-directory: ./front
 
-      - name: Lister le répertoire de couverture
+      - name: List Coverage Directory
         run: |
           echo "Listing coverage directory:"
           ls -R ./front/coverage || echo "Coverage directory does not exist"
         working-directory: ./front
 
-      - name: Télécharger le rapport Karma
+      - name: Upload Karma Report
         uses: actions/upload-artifact@v4
         with:
           name: karma-report
@@ -50,22 +50,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Configurer JDK 11
+      - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
           architecture: x64
 
-      - name: Construire avec Maven
+      - name: Build with Maven
         run: mvn -B package --file ./pom.xml
         working-directory: ./back
 
-      - name: Tester avec Maven
+      - name: Test with Maven
         run: mvn -B clean test
         working-directory: ./back
 
-      - name: Télécharger le rapport Jacoco
+      - name: Upload Jacoco Report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
@@ -78,7 +78,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Configurer JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -86,58 +86,35 @@ jobs:
           architecture: x64
 
       - name: SonarCloud Scan - Backend
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-        run: |
-          echo "Running SonarCloud Scan for Backend..."
-          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=beyealioune1_beyealioune \
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-          echo "SonarCloud Scan for Backend completed."
-        working-directory: ./back
-
-      - name: SonarCloud Scan - Frontend
         uses: sonarsource/sonarcloud-github-action@v1
         with:
-          organization: ${{ secrets.SONAR_ORGANIZATION }}
-          projectKey: 'beyealioune1_beyealioune-frontend'
+          args: |
+            -Dsonar.projectKey=beyealioune1_beyealioune
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: ./Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
 
-  dockerBuildAndTest:
+  build:
     runs-on: ubuntu-latest
     needs: [frontendTests, backendTests, sonarqube]
+    if: ${{ needs.frontendTests.result == 'success' && needs.backendTests.result == 'success' && needs.sonarqube.result == 'success' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Connexion à Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Configurer Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Construire et Tester le Back-end
-        run: |
-          docker build -t backend-image:latest ./back
-          docker run --rm backend-image:latest mvn -B clean test
-        continue-on-error: false
-
-      - name: Construire et Tester le Front-end
-        run: |
-          docker build -t frontend-image:latest ./front
-          docker run --rm frontend-image:latest ng test --code-coverage --watch=false
-        continue-on-error: false
-
-      - name: Pousser les images Docker Back-end
-        if: success() # Pousser uniquement si les tests passent
+      - name: Build and Push Back-end
         uses: docker/build-push-action@v5
         with:
           context: ./back
@@ -145,8 +122,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/bobapp-back:latest
 
-      - name: Pousser les images Docker Front-end
-        if: success() # Pousser uniquement si les tests passent
+      - name: Build and Push Front-end
         uses: docker/build-push-action@v5
         with:
           context: ./front

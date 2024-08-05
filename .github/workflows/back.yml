@@ -9,44 +9,6 @@ on:
       - main
 
 jobs:
-<<<<<<<< HEAD:.github/workflows/back.yml
-========
-  frontendTests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-
-      - name: Install Front-end Dependencies
-        run: npm install
-        working-directory: ./front
-
-      - name: Install Angular CLI Globally
-        run: npm install -g @angular/cli
-        working-directory: ./front
-
-      - name: Run Front-end Tests
-        run: ng test --code-coverage --watch=false || true
-        working-directory: ./front
-
-      - name: List Coverage Directory
-        run: |
-          echo "Listing coverage directory:"
-          ls -R ./front/coverage || echo "Coverage directory does not exist"
-        working-directory: ./front
-
-      - name: Upload Karma Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: karma-report
-          path: ./front/coverage
-
->>>>>>>> da4b3a5c0bd1dc8613b109c0c1f0d5a222d108b7:.github/workflows/ci.yml
   backendTests:
     runs-on: ubuntu-latest
     steps:

@@ -1,4 +1,5 @@
 name: Frontend CI/CD
+run-name: Frontend CI/CD Pipeline
 
 on:
   push:

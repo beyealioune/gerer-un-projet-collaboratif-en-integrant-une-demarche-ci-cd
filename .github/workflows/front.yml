@@ -71,9 +71,15 @@ jobs:
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
           echo "Running SonarCloud Scan for Frontend..."
-          ng run frontend:sonar --sonar-projectKey=your_project_key_here \
-            --sonar-host.url=${{ secrets.SONAR_HOST_URL }} \
-            --sonar.login=${{ secrets.SONAR_TOKEN }}
+          ng build --prod
+          sonar-scanner \
+            -Dsonar.projectKey=your_project_key_here \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.sources=src \
+            -Dsonar.tests=src \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
           echo "SonarCloud Scan for Frontend completed."
         working-directory: ./front
 

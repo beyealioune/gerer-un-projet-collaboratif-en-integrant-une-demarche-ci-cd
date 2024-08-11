@@ -64,6 +64,10 @@ jobs:
         run: npm install -g @angular/cli
         working-directory: ./front
 
+      - name: Build Frontend for SonarCloud
+        run: ng build --configuration=production
+        working-directory: ./front
+
       - name: SonarCloud Scan - Frontend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -71,8 +75,7 @@ jobs:
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
           echo "Running SonarCloud Scan for Frontend..."
-          ng build --prod
-          sonar-scanner \
+          npx sonar-scanner \
             -Dsonar.projectKey=your_project_key_here \
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
